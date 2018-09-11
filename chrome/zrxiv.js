@@ -1,18 +1,21 @@
 var zrxiv_document_id = 'asd';
 var zrxiv_url = 'http://localhost:8000/add';
 
-function zrxiv_tags_render(obj)
+function zrxiv_tags_render(doc)
 {
 	var tags = document.getElementById('zrxiv_tags');
 	tags.innerHTML = '';
-	for(var tag in obj['tags'])
+	for(var tag in doc['tags'])
 	{
 		var checkbox = document.createElement('input');
 		checkbox.type = 'checkbox'
 		checkbox.value = tag;
-		checkbox.checked = obj['tags'][tag];
-		checkbox.onclick = 'zrxiv_tag_changed';
-		tags.appendChild(checkbox);
+		checkbox.checked = doc['tags'][tag];
+		checkbox.addEventListener('change', function() { zrxiv_tag_changed(this); });
+		var label = document.createElement('label');
+		label.appendChild(checkbox);
+		label.appendChild(document.createTextNode(tag));
+		tags.appendChild(label);
 	}
 	document.getElementById('zrxiv_tag').value = '';
 }
@@ -20,26 +23,28 @@ function zrxiv_tags_render(obj)
 function zrxiv_tag_add()
 {
 	var tag = document.getElementById('zrxiv_tag').value;
-	console.log(tag);
+	var tags = {};
+	tags[tag] = true;
 	fetch(zrxiv_url,
 	{
 		method : 'post',
 		headers : {'Content-Type' : 'text/plain'},
-		body : JSON.stringify({id : zrxiv_document_id, tags : { tag : true } })
+		body : JSON.stringify({id : zrxiv_document_id, tags : tags})
 	})
 	.then(res => res.json())
 	.then(zrxiv_tags_render);
 }
 
-function zrxiv_tag_changed(ev)
+function zrxiv_tag_changed(checkbox)
 {
-	var tag = event.target.value;
-	var checked = event.target.checked;
+	var tag = checkbox.value;
+	var tags = {};
+	tags[tag] = checkbox.checked;
 	fetch(zrxiv_url,
 	{
 		method : 'post',
 		headers : {'Content-Type' : 'text/plain'},
-		body : JSON.stringify({id : zrxiv_document_id, tags : { tag : checked } })
+		body : JSON.stringify({id : zrxiv_document_id, tags : tags})
 	})
 	.then(res => res.json())
 	.then(zrxiv_tags_render);
@@ -59,11 +64,19 @@ function zrxiv_document_add()
 
 if(!document.getElementById('zrxiv_tags'))
 {
-	var iframe  = document.createElement('iframe');
-	iframe.src  = chrome.extension.getURL('zrxiv.html');
-	iframe.width = '100%';
-	iframe.height = '60px';
-	document.body.insertBefore(iframe, document.body.firstChild);
+	fetch(chrome.extension.getURL('zrxiv.html'))
+	.then(response => response.text())
+	.then(data => {
+		var container = document.createElement('div');
+		container.innerHTML = data;
+		document.body.insertBefore(container, document.body.firstChild);
+		var script = document.createElement('script');
+		script.type = 'text/javascript';
+		script.src = chrome.extension.getURL('zrxiv.js');
+		document.body.appendChild(script);
+	});
 }
 else
+{
 	zrxiv_document_add();
+}

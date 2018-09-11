@@ -25,7 +25,8 @@ class Api(http.server.BaseHTTPRequestHandler):
 				path = os.path.join(db, path)
 				with open(path, 'r') as f:
 					tags_all.update(json.load(f).get('tags', []))
-			res = dict(tags = {tags : tag in tags for tag in tags_all})
+
+			res = dict(tags = {tag : tag in data_['tags'] for tag in tags_all})
 
 			self.send_response(200)
 			self.send_header('Content-type', 'application/json')
