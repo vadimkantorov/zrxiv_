@@ -1,4 +1,5 @@
-var zrxiv_document_id = 'asd';
+var zrxiv_document_id = new RegExp('abs/(\\d+\.\\d+)', 'g').exec(window.location.href)[2];
+
 var zrxiv_url = 'http://localhost:8000/add';
 
 function zrxiv_tags_render(doc)
@@ -60,6 +61,14 @@ function zrxiv_document_add()
 	})
 	.then(res => res.json())
 	.then(zrxiv_tags_render);
+
+	var zrxiv_tag = document.getElementById('zrxiv_tag'), zrxiv_tag_add = document.getElementById('zrxiv_tag_add');
+	zrxiv_tag.addEventListener('keyup', function(event)
+	{
+		event.preventDefault();
+		if (event.keyCode === 13)
+			zrxiv_tag_add.click();
+	});
 }
 
 if(!document.getElementById('zrxiv_tags'))

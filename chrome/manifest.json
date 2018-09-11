@@ -5,7 +5,7 @@
 	"content_scripts": [
 		{
 			"matches": [
-				"https://arxiv.org/*"
+				"https://arxiv.org/abs/*"
 			],
 			"js": ["zrxiv.js"],
 			"all_frames": true
