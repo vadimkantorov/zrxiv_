@@ -1,6 +1,6 @@
-var zrxiv_document_id = new RegExp('abs/(\\d+\.\\d+)', 'g').exec(window.location.href)[2];
+var zrxiv_document_id = new RegExp('abs/(\\d+\.\\d+)', 'g').exec(window.location.href)[1];
 
-var zrxiv_url = 'http://localhost:8000/add';
+var zrxiv_root = 'http://localhost:8000';
 
 function zrxiv_tags_render(doc)
 {
@@ -26,7 +26,7 @@ function zrxiv_tag_add()
 	var tag = document.getElementById('zrxiv_tag').value;
 	var tags = {};
 	tags[tag] = true;
-	fetch(zrxiv_url,
+	fetch(zrxiv_root + '/add',
 	{
 		method : 'post',
 		headers : {'Content-Type' : 'text/plain'},
@@ -41,7 +41,7 @@ function zrxiv_tag_changed(checkbox)
 	var tag = checkbox.value;
 	var tags = {};
 	tags[tag] = checkbox.checked;
-	fetch(zrxiv_url,
+	fetch(zrxiv_root + '/add',
 	{
 		method : 'post',
 		headers : {'Content-Type' : 'text/plain'},
@@ -53,7 +53,7 @@ function zrxiv_tag_changed(checkbox)
 
 function zrxiv_document_add()
 {
-	fetch(zrxiv_url,
+	fetch(zrxiv_root + '/add',
 	{
 		method : 'post',
 		headers : {'Content-Type' : 'text/plain'},
@@ -69,9 +69,10 @@ function zrxiv_document_add()
 		if (event.keyCode === 13)
 			zrxiv_tag_add.click();
 	});
+	document.getElementById('zrxiv').href = zrxiv_root;
 }
 
-if(!document.getElementById('zrxiv_tags'))
+if(!document.getElementById('zrxiv'))
 {
 	fetch(chrome.extension.getURL('zrxiv.html'))
 	.then(response => response.text())
