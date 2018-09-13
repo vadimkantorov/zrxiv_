@@ -1,0 +1,44 @@
+<html>
+	<head>
+		<title>zrXiv</title>
+	</head>
+	<body>
+		<table>
+			<thead>
+				<tr>
+					<th>added</th>
+					<th>title</th>
+					<th>tags</th>
+				</tr>
+			</thead>
+			<tbody id="zrxiv_docs">
+			</tbody>
+		</table>
+		<script type="text/javascript">
+			var zrxiv_docs = JSON.parse('$zrxiv_docs');
+			var table = document.getElementById('zrxiv_docs');
+
+			for(var i = 0; i < zrxiv_docs.length; i++)
+			{
+				var doc = zrxiv_docs[i];
+				var tr = document.createElement('tr');
+				var td = document.createElement('td');
+				td.appendChild(document.createTextNode(new Date(doc.added_at * 1000).toLocaleString()));
+				tr.appendChild(td);
+
+				td = document.createElement('td');
+				var a = document.createElement('a');
+				a.href = doc.url;
+				a.appendChild(document.createTextNode(doc.title));
+				td.appendChild(a)
+				tr.appendChild(td);
+
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(doc.tags.join()));
+				tr.appendChild(td);
+
+				table.appendChild(tr);
+			}
+		</script>
+	</body>
+</html>
